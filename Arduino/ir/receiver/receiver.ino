@@ -1,33 +1,18 @@
-// IR
+void setup() {
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+}
 
-const int RECEIVE_PIN = A0;
-const int SPK_PIN = 13;
+void loop() {
+  digitalWrite(A3, random(100, 255));
+  digitalWrite(A4, random(100, 255));
+  digitalWrite(A5, random(100, 255));
+  delay(5000);
 
-unsigned short minValue = 1023;
-unsigned short maxValue = 0;
-
-void setup() {  
-    pinMode(RECEIVE_PIN, INPUT);  
-    pinMode(SPK_PIN, OUTPUT);
-    Serial.begin(9600);    
-}  
-
-void loop() {  
-    unsigned short value = analogRead(RECEIVE_PIN);
-    if (minValue > value) minValue = value;
-    if (maxValue < value) maxValue = value;
-    Serial.print(value);
-    Serial.print(" ");
-    Serial.print(minValue);
-    Serial.print(" ");
-    Serial.print(maxValue);
-    Serial.print(" ");
-    value = map(value, minValue, maxValue, 0, 10);
-    Serial.println(value);
-    if (value < 9) {
-      tone(SPK_PIN, 500, 500);
-      delay(1000);    
-    } else {
-      delay(20);
-    }
-}  
+  analogWrite(8, random(150, 255));
+  digitalWrite(9, LOW);
+  analogWrite(10, random(150, 255));
+  digitalWrite(11, LOW);
+}

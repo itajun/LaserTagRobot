@@ -41,6 +41,14 @@ void Motors::straight(byte direction, byte speed) {
 	motorRight->run(direction, speed);
 }
 
+void Motors::steer(byte direction, byte value) {
+	if (direction == LEFT) {
+		tilt = value * -1;
+	} else {
+		tilt = value;
+	}
+}
+
 void Motors::heartbeat() {
 	if (nextCycle > millis() || !lockWheels) {
 		return;
@@ -63,7 +71,7 @@ void Motors::heartbeat() {
 		deviation *= -1;
 	}
 
-	if (absDeviation > 0) {
+	if (absDeviation > 0 && tilt == 0) {
 		byte cycleBias = maxSpeed * absDeviation / total;
 
 		// < 0 right too fast
@@ -80,7 +88,12 @@ void Motors::heartbeat() {
 			rightSpeed += maxSpeed - leftSpeed;
 			leftSpeed = maxSpeed;
 		}
-
+	} else {
+		if (tilt < 0) {
+			leftSpeed = bestLeftSpeed + tilt;
+		} else {
+			rightSpeed = bestRightSpeed - tilt;
+		}
 	}
 
 	motorLeft->run(lockDirection, leftSpeed);

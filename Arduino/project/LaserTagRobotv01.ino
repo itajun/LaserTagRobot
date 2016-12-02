@@ -84,7 +84,7 @@ void processCommand() {
     }
 
 	if (command.charAt(0) == 'p') {
-		broadcast("pong");
+		broadcast("pong;");
 	} else if (command.charAt(0) == 'l') {
 		byte payload = command.substring(1, 4).toInt();
 		motors.leftWheel(FORWARD, payload);
@@ -98,7 +98,13 @@ void processCommand() {
 		byte payload = command.substring(1, 4).toInt();
 		motors.straight(BACKWARD, payload);
 	} else if (command.charAt(0) == 's') {
-		motors.stop();
+		if (command.length() < 3) {
+			motors.stop();
+		} else {
+			byte payload = command.substring(2, 4).toInt();
+			byte direction = command.charAt(1) == 'l' ? LEFT : RIGHT;
+			motors.steer(direction, payload);
+		}
 	} else if (command.charAt(0) == 't') {
 		laserEmitter.shoot();
 		tunes.shoot();
@@ -111,16 +117,17 @@ void processCommand() {
 }
 
 // Game logic
-unsigned long lastTimeShot = 0;
+unsigned long immuneUntil = 0;
 
 void gameLogic() {
 	// Nothing can happen 1s after being shot... You are immune
 	unsigned short value = laserReceiver.readAndClear();
-	if ((lastTimeShot + 1000) < millis()) {
-		if (value > 10) {
+	if (immuneUntil < millis()) {
+		if (value > 20) {
 			tunes.shot();
 			rgbLED.glow(255, 0, 0, 250);
-			lastTimeShot = millis();
+			broadcast(String(String("s") + value + ";").c_str());
+			immuneUntil = millis() + 1000;
 		}
 	}
 }

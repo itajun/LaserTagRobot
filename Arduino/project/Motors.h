@@ -18,6 +18,8 @@ public:
 
 	void straight(byte direction, byte speed);
 
+	void steer(byte direction, byte value);
+
 	void heartbeat();
 private:
 	const unsigned short CALIBRATION_CYCLE = 200;
@@ -31,6 +33,7 @@ private:
 	byte bestLeftSpeed = maxSpeed;
 	short rightSpeed = 0;
 	short leftSpeed = 0;
+	short tilt = 0;
 
 	Motor *motorLeft;
 	SpeedSensor *speedSensorLeft;
